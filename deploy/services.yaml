@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-scylla-clusterip-1
+  namespace: custom-services
+spec:
+  selector:
+    app: echo-scylla-1
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-scylla-1
+  namespace: custom-services
+spec:
+  selector:
+    matchLabels:
+      app: echo-scylla-1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: echo-scylla-1
+    spec:
+      containers:
+      - name: echo-scylla-1
+        image: xuanlinhha/echo-scylla
+        # image: xuanlinhha/echo-scylla:multistage
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-scylla-clusterip-2
+  namespace: custom-services
+spec:
+  selector:
+    app: echo-scylla-2
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-scylla-2
+  namespace: custom-services
+spec:
+  selector:
+    matchLabels:
+      app: echo-scylla-2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: echo-scylla-2
+    spec:
+      containers:
+      - name: echo-scylla-2
+        image: xuanlinhha/echo-scylla
+        # image: xuanlinhha/echo-scylla:multistage
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+
+# kubectl port-forward service/echo-scylla-clusterip 3000:3000 -n custom-services

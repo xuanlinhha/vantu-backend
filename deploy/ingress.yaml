@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: test.ingress
+  namespace: custom-services
+spec:
+  tls:
+  - hosts:
+    - vantu.org
+    secretName: vantu.org.secret
+  rules:
+    - host: vantu.org
+      http:
+        paths:
+          - path: /nodb1
+            pathType: Prefix
+            backend:
+              service:
+                name: echo-scylla-clusterip-1
+                port:
+                  number: 3000
+          - path: /nodb2
+            pathType: Prefix
+            backend:
+              service:
+                name: echo-scylla-clusterip-2
+                port:
+                  number: 3000
+  ingressClassName: nginx
+
+# curl https://vantu.org/nodb1/test1
+# curl https://vantu.org/nodb2/test1
