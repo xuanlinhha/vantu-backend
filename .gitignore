@@ -1,6 +1,5 @@
 .vscode/
 bin/
-app/__debug_bin
-app/.env
-app/vantu.db
-vantu.db
+vantu.sqlite.db
+mongodb/
+.DS_Store

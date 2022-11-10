@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 # RUN echo "$(ls)"
 RUN go mod tidy
-RUN go build -o ./go-vantu-backend vantu.org/go-backend/app
+RUN go build -o ./go-vantu-backend vantu.org/go-backend/cmd/vantu-backend
 
 # Deploy
 FROM ubuntu:21.10

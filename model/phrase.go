@@ -11,6 +11,7 @@ type Phrase struct {
 	Han     string `json:"han"`
 	Content string `json:"content"`
 	Info    string `json:"info"`
+	Svg     string `json:"svg"`
 }
 
 type PhraseJson struct {
@@ -18,6 +19,7 @@ type PhraseJson struct {
 	Han     string                 `json:"han"`
 	Content ContentJson            `json:"content"`
 	Info    map[string]interface{} `json:"info"`
+	Svg     map[string]interface{} `json:"svg"`
 }
 
 type ContentJson struct {
@@ -36,6 +38,12 @@ func ConvertToJson(p *Phrase) *PhraseJson {
 	}
 	var info map[string]interface{}
 	if err := json.Unmarshal([]byte(p.Info), &info); err != nil {
+		logrus.Error("p.Content: ", p.Info)
+		logrus.Error("Error ConvertToJson ", err.Error())
+	}
+
+	var svg map[string]interface{}
+	if err := json.Unmarshal([]byte(p.Svg), &svg); err != nil {
 		logrus.Error("p.Content: ", p.Info)
 		logrus.Error("Error ConvertToJson ", err.Error())
 	}
