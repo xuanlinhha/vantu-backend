@@ -1,0 +1,10 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  vantu-backend:
+    image: xuanlinhha/go-vantu-backend
+    ports:
+      - "3000:3000"
+  vantu-frontend:
+    image: xuanlinhha/gatsby-vantu-frontend
+    ports:
+      - "80:80"

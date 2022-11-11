@@ -3,7 +3,8 @@ package model
 import (
 	"encoding/json"
 
-	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+	"vantu.org/go-backend/common"
 )
 
 type Phrase struct {
@@ -19,7 +20,7 @@ type PhraseJson struct {
 	Han     string                 `json:"han"`
 	Content ContentJson            `json:"content"`
 	Info    map[string]interface{} `json:"info"`
-	Svg     map[string]interface{} `json:"svg"`
+	Svg     string                 `json:"svg"`
 }
 
 type ContentJson struct {
@@ -33,26 +34,22 @@ type ContentJson struct {
 func ConvertToJson(p *Phrase) *PhraseJson {
 	var content ContentJson
 	if err := json.Unmarshal([]byte(p.Content), &content); err != nil {
-		logrus.Error("p.Content: ", p.Content)
-		logrus.Error("Error ConvertToJson: ", err.Error())
+		common.Logger.Error("p Content: ", zap.Error(err))
 	}
 	var info map[string]interface{}
 	if err := json.Unmarshal([]byte(p.Info), &info); err != nil {
-		logrus.Error("p.Content: ", p.Info)
-		logrus.Error("Error ConvertToJson ", err.Error())
+		common.Logger.Error("p Info: ", zap.Error(err))
 	}
-
-	var svg map[string]interface{}
+	var svg string
 	if err := json.Unmarshal([]byte(p.Svg), &svg); err != nil {
-		logrus.Error("p.Content: ", p.Info)
-		logrus.Error("Error ConvertToJson ", err.Error())
+		common.Logger.Error("p Svg: ", zap.Error(err))
 	}
-
 	pj := PhraseJson{
 		Id:      p.Id,
 		Han:     p.Han,
 		Content: content,
 		Info:    info,
+		Svg:     svg,
 	}
 	return &pj
 }

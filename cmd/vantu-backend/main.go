@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -16,7 +14,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
-	"vantu.org/go-backend/model"
+	"vantu.org/go-backend/common"
 	"vantu.org/go-backend/phrase/api"
 
 	"vantu.org/go-backend/phrase/repo"
@@ -24,25 +22,12 @@ import (
 )
 
 func main() {
-	// env variables
-	port := os.Getenv("PORT")
-	if strings.TrimSpace(port) == "" {
-		port = ":3000"
-	}
-	timeout, err := strconv.Atoi(os.Getenv("TIMEOUT"))
-	if err != nil {
-		logrus.Fatal("Invalid Timeout: ", err)
-	}
-	config := model.Config{
-		Port:        port,
-		CharsPath:   os.Getenv("CHARS_PATH"),
-		PhrasesPath: os.Getenv("PHRASES_PATH"),
-		SqliteDB:    os.Getenv("SQLITE_DB"),
-		Timeout:     timeout,
-	}
+	common.InitLogger()
+	defer common.CleanLogger()
+	common.InitConfig()
 
 	// read chars path
-	charsJsonFile, err := os.Open(config.CharsPath)
+	charsJsonFile, err := os.Open(common.Conf.CharsPath)
 	if err != nil {
 		logrus.Fatal("Cannot Open Chars Json: ", err)
 	}
@@ -55,7 +40,7 @@ func main() {
 	json.Unmarshal(byteValue, &allChars)
 
 	// read phrases path
-	phrasesJsonFile, err := os.Open(config.PhrasesPath)
+	phrasesJsonFile, err := os.Open(common.Conf.PhrasesPath)
 	if err != nil {
 		logrus.Fatal("Cannot open Phrases: ", err)
 	}
@@ -68,13 +53,13 @@ func main() {
 	json.Unmarshal(byteValue, &allPhrases)
 
 	// Initialization
-	db, err := sqlx.Connect("sqlite3", config.SqliteDB)
+	db, err := sqlx.Connect("sqlite3", common.Conf.SqliteDB)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 	phraseRepo := repo.NewPhraseRepo(db)
-	timeoutContext := time.Duration(config.Timeout) * time.Second
+	timeoutContext := time.Duration(5) * time.Second
 	phraseService := service.NewPhraseService(phraseRepo, timeoutContext)
 	searchService := service.NewSearchService(allChars, allPhrases)
 
@@ -87,7 +72,7 @@ func main() {
 	p := prometheus.NewPrometheus("echo", nil)
 	p.Use(e)
 
-	if err := e.Start(port); err != http.ErrServerClosed {
+	if err := e.Start(common.Conf.Address); err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
 }
