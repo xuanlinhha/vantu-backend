@@ -4,3 +4,4 @@ vantu.sqlite.db
 mongodb/
 .DS_Store
 _output/
+test
