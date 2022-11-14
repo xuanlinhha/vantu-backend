@@ -34,6 +34,9 @@ func (ps *phraseService) GetPhrase(c context.Context, ph string) (*model.PhraseJ
 }
 
 func (ps *phraseService) GetAllPhrases(c context.Context, phs []string) ([]*model.PhraseJson, error) {
+	if len(phs) == 0 {
+		return []*model.PhraseJson{}, nil
+	}
 	ctx, cancel := context.WithTimeout(c, ps.contextTimeout)
 	defer cancel()
 

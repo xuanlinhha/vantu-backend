@@ -12,7 +12,7 @@ type Phrase struct {
 	Han     string `json:"han"`
 	Content string `json:"content"`
 	Info    string `json:"info"`
-	Svg     string `json:"svg"`
+	// Svg     string `json:"svg"`
 }
 
 type PhraseJson struct {
@@ -20,7 +20,7 @@ type PhraseJson struct {
 	Han     string                 `json:"han"`
 	Content ContentJson            `json:"content"`
 	Info    map[string]interface{} `json:"info"`
-	Svg     string                 `json:"svg"`
+	// Svg     string                 `json:"svg"`
 }
 
 type ContentJson struct {
@@ -40,16 +40,16 @@ func ConvertToJson(p *Phrase) *PhraseJson {
 	if err := json.Unmarshal([]byte(p.Info), &info); err != nil {
 		common.Logger.Error("p Info: ", zap.Error(err))
 	}
-	var svg string
-	if err := json.Unmarshal([]byte(p.Svg), &svg); err != nil {
-		common.Logger.Error("p Svg: ", zap.Error(err))
-	}
+	// var svg string
+	// if err := json.Unmarshal([]byte(p.Svg), &svg); err != nil {
+	// 	common.Logger.Error("p Svg: ", zap.Error(err))
+	// }
 	pj := PhraseJson{
 		Id:      p.Id,
 		Han:     p.Han,
 		Content: content,
 		Info:    info,
-		Svg:     svg,
+		// Svg:     svg,
 	}
 	return &pj
 }

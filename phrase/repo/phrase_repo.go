@@ -25,7 +25,7 @@ func NewPhraseRepo(db *sqlx.DB) PhraseRepo {
 }
 
 func (ps *phraseRepo) GetPhraseByHan(ctx context.Context, han string) (*model.Phrase, error) {
-	query := "SELECT * FROM phrases WHERE han = ?"
+	query := "SELECT id, han, content, info FROM phrases WHERE han = ?"
 	list, err := ps.fetch(ctx, query, han)
 	if err != nil {
 		return &model.Phrase{}, err
@@ -38,7 +38,7 @@ func (ps *phraseRepo) GetPhraseByHan(ctx context.Context, han string) (*model.Ph
 }
 
 func (ps *phraseRepo) GetAllPhrasesInHans(ctx context.Context, hans []string) ([]*model.Phrase, error) {
-	query, args, err := sqlx.In("SELECT * FROM phrases WHERE han IN (?);", hans)
+	query, args, err := sqlx.In("SELECT id, han, content, info FROM phrases WHERE han IN (?);", hans)
 	if err != nil {
 		common.Logger.Error("sqlx.In", zap.Error(err))
 		return make([]*model.Phrase, 0), err
@@ -73,7 +73,7 @@ func (pr *phraseRepo) fetch(ctx context.Context, query string, args ...interface
 			&t.Han,
 			&t.Content,
 			&t.Info,
-			&t.Svg,
+			// &t.Svg,
 		)
 		if err != nil {
 			common.Logger.Error("rows.Scan", zap.Error(err))
